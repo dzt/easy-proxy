@@ -47,7 +47,7 @@ prompt.get([{
 
     }
     console.log(`Creating proxies | ${proxy_count}`)
-    if (config.provider = '') {
+    if (config.provider = 'digital_ocean') {
       makeDO()
     } else {
       console.log('Provider undefined')
