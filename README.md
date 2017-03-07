@@ -15,7 +15,7 @@ $ cd easy-proxy
 $ npm install
 ```
 
-Configure information inside the `config.example.json` be sure to rename it to `config.json` when you're done.
+Configure information inside the `config.example.json` be sure to rename it to `config.json` or simply run `mv config.example.json config.json` (macOS & Windows) when you're done.
 
 Run After Setup:
 
