@@ -100,7 +100,7 @@ function makeDO() {
                 .exec('yum install squid httpd-tools -y')
                 .exec('touch /etc/squid/passwd')
                 .exec(`htpasswd -b /etc/squid/passwd ${info.username} ${info.password}`)
-                .exec(`wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/hidden-refuge/squid-proxy-installer/master/spi-rhel7.conf --no-check-certificate`)
+                .exec(`wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/squid.conf --no-check-certificate`)
                 .exec(`touch /etc/squid/blacklist.acl`)
                 //.exec(`sed "1s/http_port 3128/http_port ${info.port}/g" /etc/squid/squid.conf`)
                 .exec(`systemctl restart squid.service && systemctl enable squid.service`)
