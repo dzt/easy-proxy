@@ -1,6 +1,6 @@
 {
   "digital_ocean": {
-    "digital_ocean_api_key": "xxxxxxxxxxx",
+    "api_key": "xxxxxxxxxxx",
     "ssh_key_id": 6926458,
     "ssh_passphrase": "xxxxxx",
     "region": "nyc3",

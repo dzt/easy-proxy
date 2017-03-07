@@ -13,7 +13,7 @@ var proxy_count = 0
 var create = []
 
 var DigitalOcean = require('do-wrapper'),
-    api = new DigitalOcean(config.digital_ocean.digital_ocean_api_key, '9999');
+    api = new DigitalOcean(config.digital_ocean.api_key, '9999');
 
 prompt.get([{
       name: 'count',
