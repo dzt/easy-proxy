@@ -1,0 +1,10 @@
+{
+  "digital_ocean": {
+    "digital_ocean_api_key": "xxxxxxxxxxx",
+    "ssh_key_id": 6926458,
+    "ssh_passphrase": "xxxxxx",
+    "region": "nyc3",
+    "rsa_id_path": "/Users/billy/.ssh/id_rsa"
+  },
+  "provider": "digital_ocean"
+}
