@@ -6,5 +6,8 @@
     "region": "nyc3",
     "rsa_id_path": "/Users/billy/.ssh/id_rsa"
   },
+  "vultr": {
+    "apiKey": "2DFXR4BKW6DNNGHCY7UPD2F77WGZ7UUQZJDA"
+  },
   "provider": "digital_ocean"
 }

@@ -7,13 +7,14 @@ var prompt = require('prompt');
 require('console.table');
 prompt.message = 'easy-proxy'
 
-
-// centos 7
+// centos 7.2
 var proxy_count = 0
 var create = []
 
 var DigitalOcean = require('do-wrapper'),
     api = new DigitalOcean(config.digital_ocean.api_key, '9999');
+
+//console.log(require('fs').readFileSync(config.digital_ocean.rsa_id_path.replace(/(\s)/, "\\ ")).toString())
 
 prompt.get([{
       name: 'count',
@@ -92,7 +93,7 @@ function makeDO() {
             var ssh = new SSH({
                 host: host,
                 user: 'root',
-                key: require('fs').readFileSync(config.digital_ocean.rsa_id_path),
+                key: require('fs').readFileSync(config.digital_ocean.rsa_id_path.replace(/(\s)/, "\\ ")),
                 passphrase: config.digital_ocean.ssh_passphrase
             });
 
