@@ -9,5 +9,6 @@
   "vultr": {
     "apiKey": "xxxx"
   },
+  "write_txt": true,
   "provider": "digital_ocean"
 }

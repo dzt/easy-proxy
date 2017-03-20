@@ -28,6 +28,7 @@ $ node index
 ### Fields/Attributes
 * **config**{ Object }:
   * **config.provider** {  _String_ }: Provider used to create proxies as of right now only `digital_ocean` is an option.
+  * **config.write_txt** {  _Boolean_ }: Create .txt file with newly created proxies. 
   * **config.digital_ocean.api_key** {  _String_ }: DigitalOcean API Key
   * **config.digital_ocean.ssh_key_id** {  _Number_ }: SSH keys that you wish to embed into your server, you must add your SSH Key to your DigitalOcean account and collect the ID. If you are unsure of the ID associated with your SSH Key you can simply run `node scripts/ssh_keys` to find the ID attached to your key.
   * **config.digital_ocean.region** {  _String_ }: Desired location to deploy proxies. I've gathered together a list of locations you can use [here](https://gist.github.com/dzt/8499a5f3ee0e3fc390891c64f737d3c6)
