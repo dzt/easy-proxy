@@ -24,6 +24,7 @@ prompt.get([{
     let dropletPromises = proxyData.map((proxy) => createDroplet(proxy));
     Promise.all(dropletPromises).then((createdProxies) => {
       console.table(createdProxies);
+      proxess.exit();
     });
   } else {
     console.error('Unknown provider');
