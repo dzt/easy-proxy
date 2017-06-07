@@ -16,13 +16,10 @@
     "url": "https://github.com/dzt/easy-proxy/issues"
   },
   "dependencies": {
-    "async": "^2.1.5",
     "console.table": "^0.8.0",
     "do-wrapper": "^3.11.1",
     "prompt": "^1.0.0",
     "randomstring": "^1.1.5",
-    "request": "^2.81.0",
-    "simple-ssh": "^0.9.0",
-    "underscore": "^1.8.3"
+    "simple-ssh": "^0.9.0"
   }
 }
