@@ -2,14 +2,19 @@ const config = require('./config');
 const randomstring = require('randomstring');
 const prompt = require('prompt');
 const async = require('async');
-const SSH = require('simple-ssh');
+const node_ssh = require('node-ssh');
 const DigitalOcean = require('do-wrapper');
 const fs = require('fs');
+const ssh = new node_ssh();
 require('console.table');
 
 api = new DigitalOcean(config.digital_ocean.api_key, '9999');
 
 prompt.get([{
+  name: 'type',
+  required: true,
+  description: 'Proxy type? (PW/IP)'
+}, {
   name: 'count',
   required: true,
   description: 'Number of proxies to make'
@@ -21,14 +26,24 @@ prompt.get([{
   console.log(`Creating proxies | ${proxyCount}`);
   if (config.provider = 'digital_ocean') {
     let proxyData = getRandomProxyData(proxyCount);
-    let dropletPromises = proxyData.map((proxy) => createDroplet(proxy));
-    Promise.all(dropletPromises).then((createdProxies) => {
-      console.table(createdProxies);
-      proxess.exit();
+    let proxyPromises = proxyData.map((proxy) => {
+      return createDroplet()
+      .then((droplet) => {
+        console.log(`${droplet.name} | Setting up Squid (this might take a while)`);
+        if (result.type === 'pw' || result.type === 'PW') {
+          return pwProxySetup(droplet, proxy.username, proxy.password);
+        } else {
+          return ipProxySetup(droplet, config.allowed_ips);
+        }
+      });
+    });
+    Promise.all(proxyPromises).then((proxies) => {
+      console.table(proxies);
+      process.exit();
     });
   } else {
     console.error('Unknown provider');
-    proxess.exit();
+    process.exit();
   }
 });
 
@@ -58,12 +73,6 @@ let getRandomProxyData = (proxyCount) => {
   return proxyData;
 }
 
-let delay = (ms) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
 let waitForCreation = (dropletName) => {
   return new Promise((resolve) => {
     let waitInterval = setInterval(() => {
@@ -79,7 +88,7 @@ let waitForCreation = (dropletName) => {
   });
 }
 
-let createDroplet = (proxy) => {
+let createDroplet = () => {
   let dropletName = randomstring.generate(14);
   let dropletData = {
     name: dropletName,
@@ -100,41 +109,70 @@ let createDroplet = (proxy) => {
     console.log(`${dropletName} | Waiting for droplet to initialize`);
     return waitForCreation(dropletName);
   });
-  let proxyPromise = dropletPromise.then((droplet) => {
-    console.log(`${dropletName} | Setting up proxy`); 
-    return proxySetup(droplet, proxy.username, proxy.password);
-  }).catch((err) => {
-    console.error(err);
-  });
-  return proxyPromise;
+  return dropletPromise;
 }
 
-let proxySetup = (droplet, username, password) => {
+let pwProxySetup = (droplet, username, password) => {
   let id = droplet.host;
   let host = droplet.networks.v4[0].ip_address;
 
-  let ssh = new SSH({
-    host: host,
-    user: 'root',
-    key: fs.readFileSync(config.digital_ocean.rsa_id_path.replace(/(\s)/, "\\ ")),
-    passphrase: config.digital_ocean.ssh_passphrase
+  return proxyPromise = new Promise((resolve, reject) => {
+    ssh.connect({
+      host: host,
+      user: 'root',
+      privateKey: config.digital_ocean.rsa_id_path,
+      passphrase: config.digital_ocean.ssh_passphrase
+    }).then(() => {
+      ssh.execCommand(`yum install squid httpd-tools -y &&
+                       touch /etc/squid/passwd &&
+                       htpasswd -b /etc/squid/passwd ${username} ${password} &&
+                       wget -O /etc/squid/squid.conf https://hastebin.com/raw/abituqaruy --no-check-certificate &&
+                       touch /etc/squid/blacklist.acl &&
+                       systemctl restart squid.service && systemctl enable squid.service &&
+                       iptables -I INPUT -p tcp --dport 3128 -j ACCEPT &&
+                       iptables-save`)
+      .then((result) => {
+        let proxy = {
+          'IP/HOST': host,
+          'Port': '3128',
+          'Username': username,
+          'Password': password
+        };
+        resolve(proxy);
+      });
+    });
   });
+}
 
-  ssh.exec(`yum install squid httpd-tools -y &&
-            touch /etc/squid/passwd &&
-            htpasswd -b /etc/squid/passwd ${username} ${password} &&
-            wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/squid.conf --no-check-certificate &&
-            touch /etc/squid/blacklist.acl &&
-            systemctl restart squid.service && systemctl enable squid.service &&
-            iptables -I INPUT -p tcp --dport 3128 -j ACCEPT &&
-            iptables-save`
-  ).start();
-      
-  let proxy = {
-    'IP/HOST': host,
-    'Port': '3128',
-    'Username': username,
-    'Password': password
-  };
-  return proxy;
+let ipProxySetup = (droplet, ips) => {
+  let id = droplet.host;
+  let host = droplet.networks.v4[0].ip_address;
+
+  return proxyPromise = new Promise((resolve, reject) => {
+    ssh.connect({
+      host: host,
+      user: 'root',
+      privateKey: config.digital_ocean.rsa_id_path,
+      passphrase: config.digital_ocean.ssh_passphrase
+    }).then(() => {
+      ssh.execCommand(`yum install squid httpd-tools -y &&
+                       touch /etc/squid/allowed_ips.txt &&
+                       ips=${JSON.stringify(ips).replace('[','').replace(']','')} &&
+                       IFS=', ' read -r -a ipsarr <<< $ips &&
+                       printf "%s\n" "\${ipsarr[@]}" > /etc/squid/allowed_ips.txt && 
+                       wget -O /etc/squid/squid.conf https://hastebin.com/raw/utagigabah --no-check-certificate &&
+                       touch /etc/squid/blacklist.acl &&
+                       systemctl restart squid.service && systemctl enable squid.service &&
+                       iptables -I INPUT -p tcp --dport 3128 -j ACCEPT &&
+                       iptables-save`)
+      .then((result) => {
+        let proxy = {
+          'IP/HOST': host,
+          'Port': '3128',
+          'Allowed IPs': ips,
+        };
+        resolve(proxy);
+      });
+    });
+  });
 }

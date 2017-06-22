@@ -10,5 +10,6 @@
     "apiKey": "xxxx"
   },
   "write_txt": true,
-  "provider": "digital_ocean"
+  "provider": "digital_ocean",
+  "allowed_ips": ["11.22.33.44"]
 }
