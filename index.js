@@ -24,11 +24,11 @@ prompt.get([{
     let dropletPromises = proxyData.map((proxy) => createDroplet(proxy));
     Promise.all(dropletPromises).then((createdProxies) => {
       console.table(createdProxies);
-      proxess.exit();
+      process.exit();
     });
   } else {
     console.error('Unknown provider');
-    proxess.exit();
+    process.exit();
   }
 });
 
@@ -36,7 +36,7 @@ let getRandomProxyData = (proxyCount) => {
   let proxyData = [];
   for (let i = 0; i < proxyCount; i++) {
     let port = Math.floor(Math.random() * 6500) + 2000;
-    
+
     let username = randomstring.generate({
       length: 7,
       charset: 'alphabetic',
@@ -101,7 +101,7 @@ let createDroplet = (proxy) => {
     return waitForCreation(dropletName);
   });
   let proxyPromise = dropletPromise.then((droplet) => {
-    console.log(`${dropletName} | Setting up proxy`); 
+    console.log(`${dropletName} | Setting up proxy`);
     return proxySetup(droplet, proxy.username, proxy.password);
   }).catch((err) => {
     console.error(err);
@@ -129,7 +129,7 @@ let proxySetup = (droplet, username, password) => {
             iptables -I INPUT -p tcp --dport 3128 -j ACCEPT &&
             iptables-save`
   ).start();
-      
+
   let proxy = {
     'IP/HOST': host,
     'Port': '3128',
