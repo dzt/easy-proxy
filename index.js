@@ -85,7 +85,7 @@ let createDroplet = (proxy) => {
     name: dropletName,
     region: config.digital_ocean.region,
     size: '512mb',
-    image: 'centos-7-0-x64',
+    image: 'centos-7-x64',
     ssh_keys: [config.digital_ocean.ssh_key_id],
     backups: false,
     ipv6: false,
