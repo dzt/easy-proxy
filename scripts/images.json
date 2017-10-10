@@ -154,7 +154,7 @@
     "type": "snapshot",
     "size_gigabytes": 0.43
   }, {
-    "id": 28108256, //
+    "id": 28108256,
     "name": "7.4.1708 x64",
     "distribution": "CentOS",
     "slug": "centos-7-x64",
