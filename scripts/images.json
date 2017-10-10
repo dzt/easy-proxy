@@ -154,6 +154,17 @@
     "type": "snapshot",
     "size_gigabytes": 0.43
   }, {
+    "id": 28108256, //
+    "name": "7.4.1708 x64",
+    "distribution": "CentOS",
+    "slug": "centos-7-x64",
+    "public": true,
+    "regions": ["nyc1", "sfo1", "nyc2", "ams2", "sgp1", "lon1", "nyc3", "ams3", "fra1", "tor1", "sfo2", "blr1"],
+    "created_at": "2017-09-26T18:36:06Z",
+    "min_disk_size": 20,
+    "type": "snapshot",
+    "size_gigabytes": 0.38
+  }, {
     "id": 17550956,
     "name": "hadoop1",
     "distribution": "Ubuntu",
