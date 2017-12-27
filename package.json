@@ -1,25 +1,42 @@
 {
-  "name": "ssh-proxy",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Peter Soboyejo <thepcmrtim@gmail.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/dzt/easy-proxy.git"
-  },
-  "bugs": {
-    "url": "https://github.com/dzt/easy-proxy/issues"
-  },
-  "dependencies": {
-    "console.table": "^0.8.0",
-    "do-wrapper": "^3.11.1",
-    "prompt": "^1.0.0",
-    "randomstring": "^1.1.5",
-    "simple-ssh": "^0.9.0"
-  }
+    "name": "EasyProxy",
+    "version": "2.0.0",
+    "description": "Easy Proxy Creation",
+    "main": "index.js",
+    "scripts": {
+        "start": "electron .",
+        "dev": "electron . --debug",
+        "dist:win": "build --windows --x64 --dir",
+        "dist:mac": "build --mac",
+        "installer": "node scripts/installer.js"
+    },
+    "author": "Peter Soboyejo <thepcmrtim@gmail.com>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/dzt/easy-proxy.git"
+    },
+    "bugs": {
+        "url": "https://github.com/dzt/easy-proxy/issues"
+    },
+    "dependencies": {
+        "async": "^2.6.0",
+        "bootstrap": "^3.3.7",
+        "console.table": "^0.8.0",
+        "copy-paste": "^1.3.0",
+        "do-wrapper": "^3.11.1",
+        "electron-config": "^1.0.0",
+        "electron-settings": "^2.2.2",
+        "font-awesome": "^4.7.0",
+        "jquery": "^3.2.1",
+        "object-path": "^0.11.4",
+        "prompt": "^1.0.0",
+        "randomstring": "^1.1.5",
+        "request": "^2.83.0",
+        "simple-ssh": "^0.9.0",
+        "underscore": "^1.8.3"
+    },
+    "devDependencies": {
+        "electron": "1.3.4"
+    }
 }

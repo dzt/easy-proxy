@@ -1,0 +1,69 @@
+body {
+  background: white;
+}
+:not(input):not(textarea),
+:not(input):not(textarea)::after,
+:not(input):not(textarea)::before {
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+input, button, textarea, :focus {
+    outline: none; // You should add some other style for :focus to help UX/a11y
+}
+
+a:not([draggable=true]), img:not([draggable=true]) {
+    -webkit-user-drag: none;
+    user-drag: none; /* Technically not supported in Electron yet */
+}
+a[href^="http://"],
+a[href^="https://"],
+a[href^="ftp://"] {
+    -webkit-user-drag: auto;
+    user-drag: auto; /* Technically not supported in Electron yet */
+}
+
+.main footer {
+    position: fixed;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    background-color: #EEEEEE;
+    color: #666;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #fff #fff #fff #fff;
+    font-size: 12px;
+    padding: 9px 24px;
+    overflow: hidden;
+    z-index: 999;
+}
+.main footer .status div {
+    display: none;
+}
+.main footer .status div:before {
+    content: '';
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    background-color: #ccc;
+    border-radius: 100px;
+    margin-right: 6px;
+}
+.main footer .status .connected:before {
+    background-color: #66bc66;
+}
+.main footer .status .connecting:before, .main footer .status .updating:before {
+    background-color: #f04646;
+    -webkit-animation: 3s indicator infinite;
+}
+.main footer .status .disconnected:before {
+    background-color: #de7b7b;
+}
+.main footer .update {
+    float: right;
+}
+.main footer .update a {
+    display: inline;
+    padding: 3px 9px;
+}

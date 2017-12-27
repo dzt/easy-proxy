@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>EasyProxy</title>
+      <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+      <link href="../node_modules/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
+      <link rel="stylesheet" href="main.css">
+   </head>
+   <body>
+      <div class="main">
+         <center>
+            <br>
+            <hr width="100%">
+            <div style="width: 80%;">
+               <div class="form-group">
+                  <label>Number of Proxies:</label>
+                  <input type="number" placeholder="Example: 5" class="form-control" id="count">
+               </div>
+               <div class="form-group">
+                  <select class="form-control" id="sel1" disabled>
+                     <option value="fetching" id="fetching">Fetching Images...</option>
+                  </select>
+               </div>
+               <button type="submit" class="btn btn-success" id="createButton" style="width: 100%; outline: none;" disabled>Create</button>
+               <br><br>
+               <div class="btn-group">
+                  <button type="button" id="copyToClipboardButton" class="btn btn-default" aria-label="Left Align">Copy to Clipboard</button>
+                  <button type="button" id="clearLogsButton" class="btn btn-default" aria-label="Center Align">Clear Logs</button>
+                  <button type="button" id="cancelTasksButton" class="btn btn-default" aria-label="Right Align">Cancel Task(s)</button>
+                  <button type="button" id="settingsButton" class="btn btn-default" aria-label="Justify">Settings</button> 
+               </div>
+               <hr style="width: 80%;">
+            </div>
+            <br>
+            </hr>
+            <table class="table table-condensed" style="width: 80%;">
+               <thead>
+                  <tr>
+                     <th>#</th>
+                     <th>IP/Host</th>
+                     <th>Port</th>
+                     <th>Username</th>
+                     <th>Password</th>
+                     <th>Status</th>
+                  </tr>
+               </thead>
+               <tbody id="results">
+                  <!-- <tr>
+                     <td>1</td>
+                     <td>108.20.181.185</td>
+                     <td>3128</td>
+                     <td>Z2IoAD0Wec</td>
+                     <td>5095131428</td>
+                     <td style="color: green;">Creating Instance</td>
+                     </tr> -->
+               </tbody>
+            </table>
+            <br><br>
+         </center>
+         <footer>
+            <div class="status">
+               <a class="fa fa-refresh" id="refresh" style="text-decoration: none; cursor: pointer;"></a>&nbsp;&nbsp; Refresh
+            </div>
+         </footer>
+      </div>
+      <script>require('./app.js')</script>
+   </body>
+</html>

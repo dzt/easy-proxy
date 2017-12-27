@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link href="../node_modules/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
+    <style>
+      body {
+        background-color: white;
+        font-family: BlinkMacSystemFont, 'Helvetica Neue', Helvetica, sans-serif;
+        text-align: center;
+        overflow: hidden;
+        outline: none;
+        font-size: 16px;
+        -webkit-user-select: none;
+      }
+      img {
+        width: 100px;
+        height: 100px;
+      }
+      h1 {
+        font-size: 0.9em;
+        -webkit-user-select: text;
+      }
+      p {
+        font-size: 0.8em;
+        -webkit-user-select: text;
+      }
+      input[type="radio"] {
+        font-size: 0.8em;
+      }
+      input {
+        outline: none;
+      }
+      a {
+        text-decoration: none;
+      }
+
+      .btn-file {
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        background: red;
+        cursor: inherit;
+        display: block;
+      }
+      input[readonly] {
+        background-color: white !important;
+        cursor: text !important;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <hr>
+
+    <img src="./icon.png">
+    <p>
+      Version <script>document.write(require('../package.json').version)</script>
+      (<script>document.write(process.arch === 'x64' ? '64-bit' : '32-bit')</script>)
+      <br><br>
+      Written by <a href="https://github.com/dzt">@dzt</a></a>
+    </p>
+
+    <hr>
+
+    <center>
+        <h5>SSH ID Path</h5>
+      <div class="input-group" style="width: 400px;">
+          <span class="input-group-btn">
+              <span class="btn btn-primary btn-file" id="filePathBtn">
+                  Browse&hellip;
+              </span>
+          </span>
+          <input type="text" class="form-control" id="filePath" readonly>
+      </div>
+
+      <h5>SSH Passphrase</h5>
+      <input type="password" style="width: 400px;" placeholder="Leave blank if not set." class="form-control" id="passphrase">
+
+      <h5>Digital Ocean SSH Key Name</h5>
+      <input type="text" style="width: 400px;" placeholder="Example: Hunter's MacBook" class="form-control" id="keyName">
+
+      <h5>Digital Ocean API Key</h5>
+      <input type="text" style="width: 400px;" class="form-control" id="doKey">
+      
+      <br>
+      <button type="submit" class="btn btn-success" id="saveSettings" style="width: 400px; outline: none;">Save</button>
+
+    </center>
+
+  </body>
+  <script>require('./settings.js')</script>
+</html>

@@ -1,140 +1,283 @@
-const config = require('./config');
-const randomstring = require('randomstring');
-const prompt = require('prompt');
-const async = require('async');
-const SSH = require('simple-ssh');
-const DigitalOcean = require('do-wrapper');
-const fs = require('fs');
-require('console.table');
+const electron = require('electron')
+const {
+    app,
+    BrowserWindow,
+    Menu
+} = electron
+const settings = require('./settings-manager')
+const eSettings = require('electron-settings')
+const create = require('./create')
+const async = require('async')
+var DigitalOcean = require('do-wrapper'),
+    api = null;
 
-api = new DigitalOcean(config.digital_ocean.api_key, '9999');
+var win;
 
-prompt.get([{
-  name: 'count',
-  required: true,
-  description: 'Number of proxies to make'
-}], (err, result) => {
-  if (err) {
-    process.exit();
-  }
-  proxyCount = parseInt(result.count);
-  console.log(`Creating proxies | ${proxyCount}`);
-  if (config.provider = 'digital_ocean') {
-    let proxyData = getRandomProxyData(proxyCount);
-    let dropletPromises = proxyData.map((proxy) => createDroplet(proxy));
-    Promise.all(dropletPromises).then((createdProxies) => {
-      console.table(createdProxies);
-      process.exit();
+app.on('ready', () => {
+
+    settings.init()
+    app.ep = {
+        settings
+    }
+
+    win = new BrowserWindow({
+        width: 750,
+        height: 670,
+        minWidth: 750,
+        minHeight: 670,
+        resizable: true,
+        maxWidth: 750,
+        maxHeight: 640,
+        fullscreenable: false,
+        frame: true,
+        show: true,
+        icon: `${__dirname}/static/icon.png`
+    })
+    const menuTemplate = [{
+            label: 'File',
+            submenu: [{
+                    label: 'Settings',
+                    click() {
+                        initSettings()
+                    },
+                    accelerator: 'CmdOrCtrl+,',
+                },
+                {
+                    label: 'Quit',
+                    click() {
+                        app.quit()
+                    },
+                    accelerator: 'CmdOrCtrl+Q',
+                }
+            ]
+        },
+        {
+            label: 'Edit',
+            submenu: [{
+                    role: 'copy'
+                },
+                {
+                    role: 'paste'
+                },
+                {
+                    role: 'pasteandmatchstyle'
+                },
+                {
+                    role: 'delete'
+                },
+                {
+                    role: 'selectall'
+                }
+            ]
+        },
+        {
+            label: 'View',
+            submenu: [{
+                label: 'Reload',
+                accelerator: 'CmdOrCtrl+R',
+                click(item, focusedWindow) {
+                    if (focusedWindow) focusedWindow.reload()
+                }
+            }]
+        },
+        {
+            role: 'window',
+            submenu: [{
+                    role: 'minimize'
+                },
+                {
+                    role: 'close'
+                }
+            ]
+        },
+        {
+            role: 'help',
+            submenu: [{
+                    label: 'Learn More about EasyProxy',
+                    click() {
+                        require('electron').shell.openExternal('github.com/dzt/easy-proxy')
+                    }
+                },
+                {
+                    label: 'Toggle Developer Tools',
+                    accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+                    click(item, focusedWindow) {
+                        if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+                    }
+                }
+            ]
+        }
+    ]
+
+    // If the platform is Mac OS, make some changes to the window management portion of the menu
+    if (process.platform === 'darwin') {
+        menuTemplate[2].submenu = [{
+                label: 'Close',
+                accelerator: 'CmdOrCtrl+W',
+                role: 'close'
+            },
+            {
+                label: 'Minimize',
+                accelerator: 'CmdOrCtrl+M',
+                role: 'minimize'
+            },
+            {
+                label: 'Zoom',
+                role: 'zoom'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Bring All to Front',
+                role: 'front'
+            }
+        ]
+    }
+
+    // Set menu template just created as the application menu
+    const mainMenu = Menu.buildFromTemplate(menuTemplate)
+    Menu.setApplicationMenu(mainMenu)
+    win.setMenu(null);
+    win.loadURL(`file://${__dirname}/static/index.html`);
+})
+
+electron.ipcMain.on('create', function(event, args) {
+    var tasks = []
+    args.map(function(task, i) {
+        tasks.push(function(cb) {
+            create.task(win, task, settings, i+1, (err, response) => {
+                if (err) {
+                    return (err)
+                }
+                return cb(null, response)
+            })
+        })
+    })
+    async.parallel(tasks, function(err, res) {
+        if (err) {
+            console.log('err', err)
+        } else {
+            console.log(res)
+            // TODO: When Session Ends
+            win.webContents.send('tasksEnded');
+        }
     });
-  } else {
-    console.error('Unknown provider');
-    process.exit();
-  }
 });
 
-let getRandomProxyData = (proxyCount) => {
-  let proxyData = [];
-  for (let i = 0; i < proxyCount; i++) {
-    let port = Math.floor(Math.random() * 6500) + 2000;
+electron.ipcMain.on('openSettings', function(event, args) {
+    initSettings();
+});
 
-    let username = randomstring.generate({
-      length: 7,
-      charset: 'alphabetic',
-      capitalization: 'lowercase'
-    });
+console.log(eSettings.getSync('filePath'));
 
-    let password = randomstring.generate({
-      length: 14,
-      charset: 'alphabetic',
-      capitalization: 'lowercase'
-    });
+electron.ipcMain.on('open-file-dialog', function (event) {
+    require('electron').dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [{
+        name: 'All Files',
+        extensions: ['*']
+    }]
+    }, function (filename) {
+      if (filename) {
+          console.log(filename[0]);
+          event.sender.send('selected-file', filename[0]);
+      }
+    })
+});
 
-    proxyData.push({
-      username: username,
-      password: password,
-      port: port
-    });
-  }
-  return proxyData;
-}
+electron.ipcMain.on('fetchForImages', function(event) {
 
-let delay = (ms) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
+    var options = [];
+    var regionDict = [];
 
-let waitForCreation = (dropletName) => {
-  return new Promise((resolve) => {
-    let waitInterval = setInterval(() => {
-      api.dropletsGetAll({}).then((data) => {
-        let droplet = data.body.droplets.find((droplet) => {
-          return droplet.name === dropletName;
-        });
-        if (droplet.status === 'active') {
-          resolve(droplet);
+    api = new DigitalOcean(eSettings.getSync('do_api_key'));
+
+    function fetchFullRegionName(shortName) {
+        for (var i = 0; i < regionDict.length; i++) {
+            if (regionDict[i].slug == shortName) {
+                return regionDict[i].fullName;
+            }
         }
-      });
-    }, 5000);
-  });
-}
+    }
 
-let createDroplet = (proxy) => {
-  let dropletName = randomstring.generate(14);
-  let dropletData = {
-    name: dropletName,
-    region: config.digital_ocean.region,
-    size: '512mb',
-    image: 'centos-7-0-x64',
-    ssh_keys: [config.digital_ocean.ssh_key_id],
-    backups: false,
-    ipv6: false,
-    user_data: null,
-    private_networking: false,
-    volumes: null,
-    tags: null
-  };
+    // Fetch for Regions and Slug Names
+    api.regionsGetAll({}, function(err, resp, body) {
+        if (err) {
+            // Return Error to Window
+            console.log('err', err);
+            win.webContents.send('initError');
+            return
+        }
 
-  console.log(`${dropletName} | Creating droplet`);
-  let dropletPromise = api.dropletsCreate(dropletData).then(() => {
-    console.log(`${dropletName} | Waiting for droplet to initialize`);
-    return waitForCreation(dropletName);
-  });
-  let proxyPromise = dropletPromise.then((droplet) => {
-    console.log(`${dropletName} | Setting up proxy`);
-    return proxySetup(droplet, proxy.username, proxy.password);
-  }).catch((err) => {
-    console.error(err);
-  });
-  return proxyPromise;
-}
+        for (var i = 0; i < body.regions.length; i++) {
+            regionDict.push({
+                fullName: body.regions[i].name,
+                slug: body.regions[i].slug
+            })
+        }
 
-let proxySetup = (droplet, username, password) => {
-  let id = droplet.host;
-  let host = droplet.networks.v4[0].ip_address;
+        api.imagesGetAll({}, function(err, resp, body) {
+            if (err) {
+                // Return Error to Window
+                win.webContents.send('initError');
+                return
+            }
 
-  let ssh = new SSH({
-    host: host,
-    user: 'root',
-    key: fs.readFileSync(config.digital_ocean.rsa_id_path.replace(/(\s)/, "\\ ")),
-    passphrase: config.digital_ocean.ssh_passphrase
-  });
+            for (var i = 0; i < body.images.length; i++) {
+                // Look for 64bit versions of CentOS 7
+                if (body.images[i].distribution.indexOf('CentOS') > -1) {
+                        if (body.images[i].name.split(' ')[0].startsWith('7')) {
+                            for (var x = 0; x < body.images[i].regions.length; x++) {
 
-  ssh.exec(`yum install squid httpd-tools -y &&
-            touch /etc/squid/passwd &&
-            htpasswd -b /etc/squid/passwd ${username} ${password} &&
-            wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/squid.conf --no-check-certificate &&
-            touch /etc/squid/blacklist.acl &&
-            systemctl restart squid.service && systemctl enable squid.service &&
-            iptables -I INPUT -p tcp --dport 3128 -j ACCEPT &&
-            iptables-save`
-  ).start();
+                                if (fetchFullRegionName(body.images[i].regions[x]) != undefined) {
+                                    options.push({
+                                        title: `CentOS ${body.images[i].name} - ${body.images[i].id} - (${fetchFullRegionName(body.images[i].regions[x])})`,
+                                        region: body.images[i].regions[x],
+                                        slug: body.images[i].id
+                                    })
+                                }
+                            }
 
-  let proxy = {
-    'IP/HOST': host,
-    'Port': '3128',
-    'Username': username,
-    'Password': password
-  };
-  return proxy;
+                        }
+                }
+            }
+
+            win.webContents.send('updateOptionList', options);
+
+        });
+    });
+
+});
+
+function initSettings() {
+    const settingsWin = new electron.BrowserWindow({
+        backgroundColor: '#ffffff',
+        center: true,
+        fullscreen: false,
+        height: 600,
+        icon: `${__dirname}/static/icon.png`,
+        maximizable: false,
+        minimizable: false,
+        resizable: false,
+        show: false,
+        skipTaskbar: true,
+        title: 'Settings',
+        useContentSize: true,
+        width: 550
+    })
+
+    settingsWin.loadURL(`file://${__dirname}/static/settings.html`);
+    // No menu on the About settingsWindow
+    settingsWin.setMenu(null);
+
+    settingsWin.once('ready-to-show', function() {
+        settingsWin.show()
+    })
+
+    settingsWin.once('closed', function() {
+        aboutWin = null
+    })
+
+    return settingsWin.show()
 }
