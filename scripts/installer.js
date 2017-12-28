@@ -18,8 +18,7 @@ function getInstallerConfig () {
     appDirectory: path.join(outPath, 'win-unpacked'),
     noMsi: true,
     outputDirectory: path.join(outPath, 'windows-installer'),
-    setupExe: 'SupremeAccessSetup.exe',
-    loadingGif: path.join(rootPath, 'static', 'loading.gif'),
+    setupExe: 'EasyProxySetup.exe',
     setupIcon: path.join(rootPath, 'static', 'icons', 'logo.ico'),
     skipUpdateIcon: true
   })

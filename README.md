@@ -16,7 +16,9 @@ $ npm install # sudo npm install if you're on macOS
 $ npm run dev
 ```
 
+# Videos
 [Preview & Explanation Video](https://youtu.be/Uy0EpcAgaAs)
+[RSA ID Setup on macOS](https://streamable.com/6gnpe)
 
 ### Who
 
