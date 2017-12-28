@@ -16,12 +16,6 @@ $ npm install # sudo npm install if you're on macOS
 $ npm run dev
 ```
 
-Run After Setup:
-
-```sh
-$ node index
-```
-
 [Preview & Explanation Video](https://youtu.be/Uy0EpcAgaAs)
 
 ### Who
