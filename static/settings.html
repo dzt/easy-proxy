@@ -77,27 +77,35 @@
     <hr>
 
     <center>
-        <h5>SSH ID Path</h5>
-      <div class="input-group" style="width: 400px;">
-          <span class="input-group-btn">
-              <span class="btn btn-primary btn-file" id="filePathBtn">
-                  Browse&hellip;
-              </span>
-          </span>
-          <input type="text" class="form-control" id="filePath" readonly>
-      </div>
 
-      <h5>SSH Passphrase</h5>
-      <input type="password" style="width: 400px;" placeholder="Leave blank if not set." class="form-control" id="passphrase">
-
-      <h5>Digital Ocean SSH Key Name</h5>
-      <input type="text" style="width: 400px;" placeholder="Example: Hunter's MacBook" class="form-control" id="keyName">
+      <ul class="nav nav-tabs" style="width: 400px;">
+        <li role="presentation" class="active"><a href="#">General</a></li>
+        <li role="presentation"><a href="#">Forwarding</a></li>
+      </ul>
 
       <h5>Digital Ocean API Key</h5>
       <input type="text" style="width: 400px;" class="form-control" id="doKey">
-      
+
+      <h5>Authorized IPs</h5>
+      <textarea class="form-control" style="width: 400px;" rows="3"></textarea>
+
       <br>
+
+      <div class="form-check" style="font-size: 14px;">
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+        Enable IP Authorization
+      </div>
+
+      <div class="form-check" style="font-size: 14px;">
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+        Disable User/Pass
+      </div>
+
+      <br>
+
       <button type="submit" class="btn btn-success" id="saveSettings" style="width: 400px; outline: none;">Save</button>
+      <br><br>
+      <button type="submit" class="btn btn-danger" id="saveSettings" style="width: 400px; outline: none;">Destroy All Droplets</button>
 
     </center>
 

@@ -5,9 +5,9 @@ const objectPath = require('object-path')
 
 const DEFAULTS = {
     filePath: null,
-    ssh_passphrase: null,
     do_api_key: null,
-    do_ssh_key_name: null
+    ip_auth: false,
+    ips: null
 };
 
 // we need to sync every setting that can be modified externally

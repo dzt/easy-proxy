@@ -255,7 +255,7 @@ function initSettings() {
         backgroundColor: '#ffffff',
         center: true,
         fullscreen: false,
-        height: 600,
+        height: 700,
         icon: `${__dirname}/static/icon.png`,
         maximizable: false,
         minimizable: false,

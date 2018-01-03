@@ -1,6 +1,6 @@
 {
     "name": "EasyProxy",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Easy Proxy Creation",
     "main": "index.js",
     "scripts": {
@@ -48,7 +48,8 @@
         "appId": "com.petersoboyejo.easyproxy",
         "mac": {
             "target": "default",
-            "icon": "static/icons/AppIcon.icns"
+              "icon": "static/icons/logo.icns",
+              "identity": null
         },
         "win": {
             "publisherName": "EasyProxy",

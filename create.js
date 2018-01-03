@@ -64,7 +64,7 @@ var task = function(win, info, settings, no, callback) {
             });
             return callback(null, true);
         }
-        
+
         for (var i = 0; i < body.ssh_keys.length; i++) {
             if (body.ssh_keys[i].name == eSettings.getSync('do_ssh_key_name')) {
                 ssh_key_id = body.ssh_keys[i].id;
@@ -119,13 +119,20 @@ var task = function(win, info, settings, no, callback) {
             size: '512mb',
             image: parseInt(info.slug),
             ssh_keys: [ssh_key_id],
-            backups: false,
-            ipv6: false,
-            user_data: null,
-            private_networking: false,
-            volumes: null,
-            tags: null
+            monitoring: true,
+            user_data:
+              '#!/bin/bash \n' +
+              'yum install squid wget httpd-tools -y &&' +
+              'touch /etc/squid/passwd &&' +
+              `htpasswd -b /etc/squid/passwd ${info.username} ${info.password} &&` +
+              'wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/squid.conf --no-check-certificate &&' +
+              'touch /etc/squid/blacklist.acl &&' +
+              'systemctl restart squid.service && systemctl enable squid.service &&' +
+              'iptables -I INPUT -p tcp --dport 3128 -j ACCEPT &&' +
+              'iptables-save'
         };
+
+        console.log(dropletData);
 
         api.dropletsCreate(dropletData, function(err, resp, body) {
             if (err) {
@@ -138,6 +145,7 @@ var task = function(win, info, settings, no, callback) {
                     error: true
                 });
                 console.log(`[${no}] Error creating droplet.`);
+                console.log(err);
                 return callback(null, true);
             }
 
@@ -193,7 +201,7 @@ var task = function(win, info, settings, no, callback) {
                             ip: host,
                             error: false
                         });
-    
+
                         sender.send('updateMonitor', {
                             no: no,
                             msg: `Establishing SSH Connection`,
@@ -212,47 +220,47 @@ var task = function(win, info, settings, no, callback) {
                         passphrase: para
                     });
 
-                    ssh.on('error', function(err) {
-                        sender.send('updateMonitor', {
-                            no: no,
-                            msg: `SSH Connection couldn't be established.`,
-                            username: info.username,
-                            password: info.password,
-                            ip: host,
-                            error: true
-                        });
-                        ssh.end();
-                        console.log(`[${no}] SSH Connection Error`);
+                    // ssh.on('error', function(err) {
+                    //     sender.send('updateMonitor', {
+                    //         no: no,
+                    //         msg: `SSH Connection couldn't be established.`,
+                    //         username: info.username,
+                    //         password: info.password,
+                    //         ip: host,
+                    //         error: true
+                    //     });
+                    //     ssh.end();
+                    //     console.log(`[${no}] SSH Connection Error`);
+                    //
+                    //     destroyDroplet(id, api, function(err, resp) {
+                    //         if (err) {
+                    //             sender.send('updateMonitor', {
+                    //                 no: no,
+                    //                 msg: `Error Occured while destroying droplet due to bad SSH Connection.`,
+                    //                 username: info.username,
+                    //                 password: info.password,
+                    //                 ip: host,
+                    //                 error: true
+                    //             });
+                    //             return callback(null, true);
+                    //         }
+                    //
+                    //         sender.send('updateMonitor', {
+                    //             no: no,
+                    //             msg: `Droplet Destroyed due to bad SSH connection.`,
+                    //             username: info.username,
+                    //             password: info.password,
+                    //             ip: host,
+                    //             error: true
+                    //         });
+                    //
+                    //         return callback(null, true);
+                    //
+                    //     });
+                    //
+                    // });
 
-                        destroyDroplet(id, api, function(err, resp) {
-                            if (err) {
-                                sender.send('updateMonitor', {
-                                    no: no,
-                                    msg: `Error Occured while destroying droplet due to bad SSH Connection.`,
-                                    username: info.username,
-                                    password: info.password,
-                                    ip: host,
-                                    error: true
-                                });
-                                return callback(null, true);
-                            }
-
-                            sender.send('updateMonitor', {
-                                no: no,
-                                msg: `Droplet Destroyed due to bad SSH connection.`,
-                                username: info.username,
-                                password: info.password,
-                                ip: host,
-                                error: true
-                            });
-
-                            return callback(null, true);
-
-                        });
-
-                    });
-
-                    ssh.on('ready', function(data) {
+                    //ssh.on('ready', function(data) {
                         sender.send('updateMonitor', {
                             no: no,
                             msg: `SSH Connection Established`,
@@ -262,13 +270,11 @@ var task = function(win, info, settings, no, callback) {
                             error: false
                         });
 
-                        // TODO: Request Check
-
                         console.log("http://" + info.username + ":" + info.password + "@" + host + ":" + '3128')
 
                         sender.send('updateMonitor', {
                             no: no,
-                            msg: `Testing Proxy in 30 seconds`,
+                            msg: `Testing Proxy in 2 minutes`,
                             username: info.username,
                             password: info.password,
                             ip: host,
@@ -338,21 +344,21 @@ var task = function(win, info, settings, no, callback) {
                                 }
 
                             });
-                        }, 30000);
+                        }, 120000);
 
 
-                    });
+                    //});
 
-                    ssh
-                        .exec('yum install squid wget httpd-tools -y')
-                        .exec('touch /etc/squid/passwd')
-                        .exec(`htpasswd -b /etc/squid/passwd ${info.username} ${info.password}`)
-                        .exec(`wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/squid.conf --no-check-certificate`)
-                        .exec(`touch /etc/squid/blacklist.acl`)
-                        .exec(`systemctl restart squid.service && systemctl enable squid.service`)
-                        .exec(`iptables -I INPUT -p tcp --dport 3128 -j ACCEPT`)
-                        .exec(`iptables-save`)
-                        .start();
+                    // ssh
+                    //     .exec('yum install squid wget httpd-tools -y')
+                    //     .exec('touch /etc/squid/passwd')
+                    //     htpasswd -b /etc/squid/passwd ${info.username} ${info.password}`)
+                    //     wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/squid.conf --no-check-certificate`)
+                    //     touch /etc/squid/blacklist.acl`)
+                    //     systemctl restart squid.service && systemctl enable squid.service`)
+                    //     iptables -I INPUT -p tcp --dport 3128 -j ACCEPT`)
+                    //     iptables-save`)
+                    //     .start();
 
 
                 });
