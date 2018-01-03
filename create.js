@@ -2,7 +2,6 @@ const randomstring = require('randomstring')
 const DigitalOcean = require('do-wrapper')
 const eSettings = require('electron-settings')
 const request = require('request')
-const SSH = require('simple-ssh')
 const _ = require('underscore')
 const ipcMain = require('electron').ipcMain
 
@@ -220,47 +219,6 @@ var task = function(win, info, settings, no, callback) {
                         passphrase: para
                     });
 
-                    // ssh.on('error', function(err) {
-                    //     sender.send('updateMonitor', {
-                    //         no: no,
-                    //         msg: `SSH Connection couldn't be established.`,
-                    //         username: info.username,
-                    //         password: info.password,
-                    //         ip: host,
-                    //         error: true
-                    //     });
-                    //     ssh.end();
-                    //     console.log(`[${no}] SSH Connection Error`);
-                    //
-                    //     destroyDroplet(id, api, function(err, resp) {
-                    //         if (err) {
-                    //             sender.send('updateMonitor', {
-                    //                 no: no,
-                    //                 msg: `Error Occured while destroying droplet due to bad SSH Connection.`,
-                    //                 username: info.username,
-                    //                 password: info.password,
-                    //                 ip: host,
-                    //                 error: true
-                    //             });
-                    //             return callback(null, true);
-                    //         }
-                    //
-                    //         sender.send('updateMonitor', {
-                    //             no: no,
-                    //             msg: `Droplet Destroyed due to bad SSH connection.`,
-                    //             username: info.username,
-                    //             password: info.password,
-                    //             ip: host,
-                    //             error: true
-                    //         });
-                    //
-                    //         return callback(null, true);
-                    //
-                    //     });
-                    //
-                    // });
-
-                    //ssh.on('ready', function(data) {
                         sender.send('updateMonitor', {
                             no: no,
                             msg: `SSH Connection Established`,
@@ -345,21 +303,6 @@ var task = function(win, info, settings, no, callback) {
 
                             });
                         }, 120000);
-
-
-                    //});
-
-                    // ssh
-                    //     .exec('yum install squid wget httpd-tools -y')
-                    //     .exec('touch /etc/squid/passwd')
-                    //     htpasswd -b /etc/squid/passwd ${info.username} ${info.password}`)
-                    //     wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/squid.conf --no-check-certificate`)
-                    //     touch /etc/squid/blacklist.acl`)
-                    //     systemctl restart squid.service && systemctl enable squid.service`)
-                    //     iptables -I INPUT -p tcp --dport 3128 -j ACCEPT`)
-                    //     iptables-save`)
-                    //     .start();
-
 
                 });
 
