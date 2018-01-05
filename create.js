@@ -37,67 +37,7 @@ var task = function(win, info, settings, no, callback) {
         error: false
     });
 
-    if (!stopped) {
-        sender.send('updateMonitor', {
-            no: no,
-            msg: 'Fetching for SSH Key ID',
-            username: info.username,
-            password: info.password,
-            ip: 'n/a',
-            error: false
-        });
-    } else {
-        return callback(null, true);
-    }
-
-    api.accountGetKeys({}, function(err, resp, body) {
-        if (err) {
-            console.log(`[${no}] Error Occured while fetching SSH Information from the DigitalOcean API.`);
-            sender.send('updateMonitor', {
-                no: no,
-                msg: 'Error Occured while fetching SSH Information from the DigitalOcean API.',
-                username: info.username,
-                password: info.password,
-                ip: 'n/a',
-                error: true
-            });
-            return callback(null, true);
-        }
-
-        for (var i = 0; i < body.ssh_keys.length; i++) {
-            if (body.ssh_keys[i].name == eSettings.getSync('do_ssh_key_name')) {
-                ssh_key_id = body.ssh_keys[i].id;
-            }
-        }
-
-        if (ssh_key_id == null) {
-            console.log(`[${no}] SSH Key Name was not found.`);
-            sender.send('updateMonitor', {
-                no: no,
-                msg: 'SSH Key Name was not found',
-                username: info.username,
-                password: info.password,
-                ip: 'n/a',
-                error: true
-            });
-            return callback(null, true);
-        } else {
-            sender.send('updateMonitor', {
-                no: no,
-                msg: `SSH Key matching "${eSettings.getSync('do_ssh_key_name')}" found!`,
-                username: info.username,
-                password: info.password,
-                ip: 'n/a',
-                error: false
-            });
-
-            if (!stopped) {
-                createDroplet();
-            } else {
-                return callback(null, true);
-            }
-        }
-    });
+    createDroplet();
 
     function createDroplet() {
 

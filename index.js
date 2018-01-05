@@ -11,7 +11,7 @@ const async = require('async')
 var DigitalOcean = require('do-wrapper'),
     api = null;
 
-var win;
+var win, settingsWin;
 
 app.on('ready', () => {
 
@@ -207,6 +207,16 @@ electron.ipcMain.on('wipeDroplets', function (event) {
   });
 });
 
+electron.ipcMain.on('resetApp', (event, args) => {
+    win.close()
+    settingsWin.close()
+    app.quit();
+})
+
+electron.ipcMain.on('refreshMainWindow', (event, args) => {
+    win.webContents.send('refreshMain');
+})
+
 electron.ipcMain.on('fetchForImages', function(event) {
 
     var options = [];
@@ -272,7 +282,7 @@ electron.ipcMain.on('fetchForImages', function(event) {
 });
 
 function initSettings() {
-    const settingsWin = new electron.BrowserWindow({
+    settingsWin = new electron.BrowserWindow({
         backgroundColor: '#ffffff',
         center: true,
         fullscreen: false,

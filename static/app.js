@@ -40,6 +40,10 @@ ipcRenderer.on('updateOptionList', function(event, data) {
 
 });
 
+ipcRenderer.on('refreshMain', function(event) {
+  remote.getCurrentWindow().reload();
+});
+
 // Create Proxies Button
 $('#createButton').click(() => {
 

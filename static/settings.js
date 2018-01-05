@@ -4,6 +4,7 @@ const settings = require('electron-settings');
 const $ = require('jquery')
 const Config = require('electron-config');
 const config = new Config();
+const dialog = remote.dialog;
 const ipcRenderer = require('electron').ipcRenderer
 
 var settingsValues = app.ep.settings.getAll();
@@ -43,7 +44,7 @@ $('#doKey').change(function() {
 });
 
 $('#saveSettings').click(() => {
-    remote.getCurrentWindow().reload();
+    ipcRenderer.send('refreshMainWindow');
 });
 
 $('#destroy').click(() => {
@@ -57,6 +58,25 @@ $('#destroy').click(() => {
   } else {
     $('#destroy').text('Destroying...');
     ipcRenderer.send('wipeDroplets');
+  }
+});
+
+$('#reset').click(() => {
+  dialog.showMessageBox({
+      "message": `Are you sure you want to reset?`,
+      "detail": "You will not be able to recover any task data after you perform this action.",
+      "buttons": ["Ok", "Cancel"],
+  }, function(response) {
+      switch (response) {
+          case 0:
+              ok();
+          case 1:
+              break;
+      }
+  });
+  function ok() {
+    settings.resetToDefaults()
+    ipcRenderer.send('resetApp');
   }
 });
 
