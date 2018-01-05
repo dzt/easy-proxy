@@ -112,6 +112,8 @@ var task = function(win, info, settings, no, callback) {
 
         var dropletName = randomstring.generate(14) + '-ep';
 
+        /*
+
         var dropletData = {
             name: dropletName,
             region: info.region,
@@ -124,7 +126,28 @@ var task = function(win, info, settings, no, callback) {
               'yum install squid wget httpd-tools -y &&' +
               'touch /etc/squid/passwd &&' +
               `htpasswd -b /etc/squid/passwd ${info.username} ${info.password} &&` +
-              'wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/squid.conf --no-check-certificate &&' +
+              'wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/userpass/squid.conf --no-check-certificate &&' +
+              'touch /etc/squid/blacklist.acl &&' +
+              'systemctl restart squid.service && systemctl enable squid.service &&' +
+              'iptables -I INPUT -p tcp --dport 3128 -j ACCEPT &&' +
+              'iptables-save'
+        };
+
+        */
+
+        var dropletData = {
+            name: dropletName,
+            region: info.region,
+            size: '512mb',
+            image: parseInt(info.slug),
+            ssh_keys: [ssh_key_id],
+            monitoring: true,
+            user_data:
+              '#!/bin/bash \n' +
+              'yum install squid wget httpd-tools -y &&' +
+              //'touch /etc/squid/passwd &&' +
+              //`htpasswd -b /etc/squid/passwd ${info.username} ${info.password} &&` +
+              'wget -O /etc/squid/squid.conf https://raw.githubusercontent.com/dzt/easy-proxy/master/confg/nouserpass/squid.conf --no-check-certificate &&' +
               'touch /etc/squid/blacklist.acl &&' +
               'systemctl restart squid.service && systemctl enable squid.service &&' +
               'iptables -I INPUT -p tcp --dport 3128 -j ACCEPT &&' +
