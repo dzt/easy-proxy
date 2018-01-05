@@ -112,8 +112,6 @@ var task = function(win, info, settings, no, callback) {
 
         var dropletName = randomstring.generate(14) + '-ep';
 
-        /*
-
         var dropletData = {
             name: dropletName,
             region: info.region,
@@ -133,8 +131,7 @@ var task = function(win, info, settings, no, callback) {
               'iptables-save'
         };
 
-        */
-
+/*
         var dropletData = {
             name: dropletName,
             region: info.region,
@@ -154,6 +151,7 @@ var task = function(win, info, settings, no, callback) {
               'iptables-save'
         };
 
+*/
         console.log(dropletData);
 
         api.dropletsCreate(dropletData, function(err, resp, body) {
@@ -223,42 +221,34 @@ var task = function(win, info, settings, no, callback) {
                             ip: host,
                             error: false
                         });
-
-                        sender.send('updateMonitor', {
-                            no: no,
-                            msg: `Establishing SSH Connection`,
-                            username: info.username,
-                            password: info.password,
-                            ip: host,
-                            error: false
-                        });
                     }
-
-                        sender.send('updateMonitor', {
-                            no: no,
-                            msg: `SSH Connection Established`,
-                            username: info.username,
-                            password: info.password,
-                            ip: host,
-                            error: false
-                        });
 
                         console.log("http://" + info.username + ":" + info.password + "@" + host + ":" + '3128')
 
-                        sender.send('updateMonitor', {
-                            no: no,
-                            msg: `Testing Proxy in 2 minutes`,
-                            username: info.username,
-                            password: info.password,
-                            ip: host,
-                            error: false
-                        });
+
+                        var count = 119;
+                        for (var i = 0; i < 119; i++) {
+
+                          setTimeout(function() {
+                            sender.send('updateMonitor', {
+                                no: no,
+                                msg: `Testing Proxy in ${count}s`,
+                                username: info.username,
+                                password: info.password,
+                                ip: host,
+                                error: false
+                            });
+                            count--;
+                          }, 1000*i);
+
+                        }
+
 
                         setTimeout(function() {
                             request({
                                 method: 'get',
                                 url: 'https://google.com/',
-                                proxy: "http://" + host + ":" + '3128',
+                                proxy: "http://" + info.username + ":" + info.password + "@" + host + ":" + '3128',
                                 gzip: true,
                                 headers: {
                                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3107.4 Safari/537.36'
@@ -332,7 +322,7 @@ var task = function(win, info, settings, no, callback) {
 }
 
 function destroyDroplet(id, api, cb) {
-    api.dropletsCreate(id, function(err, resp, body) {
+    api.dropletsDelete(id, function(err, resp, body) {
         if (err) {
             return cb(true, null);
         }

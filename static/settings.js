@@ -4,7 +4,7 @@ const settings = require('electron-settings');
 const $ = require('jquery')
 const Config = require('electron-config');
 const config = new Config();
-const ipcRenderer = require('electron').ipcRenderer;
+const ipcRenderer = require('electron').ipcRenderer
 
 var settingsValues = app.ep.settings.getAll();
 var settingsVal = config.get('settingsVal')
@@ -44,4 +44,38 @@ $('#doKey').change(function() {
 
 $('#saveSettings').click(() => {
     remote.getCurrentWindow().reload();
+});
+
+$('#destroy').click(() => {
+  $("#destroy").prop("disabled", true);
+  if (settingsValues.do_api_key == null || settingsValues.do_api_ke == "") {
+    $('#destroy').text('No API Key was found');
+    setTimeout(function(){
+      $('#destroy').text('Destroy');
+      $("#destroy").prop("disabled", false);
+    }, 5000);
+  } else {
+    $('#destroy').text('Destroying...');
+    ipcRenderer.send('wipeDroplets');
+  }
+});
+
+ipcRenderer.on('errDestroy', function(event, data) {
+
+  $('#destroy').text('Error Occured while destroying');
+
+  setTimeout(function(){
+    $('#destroy').text('Destroy');
+    $("#destroy").prop("disabled", false);
+  }, 5000);
+
+});
+
+ipcRenderer.on('wipe-complete', function(event, data) {
+  $('#destroy').text('All Droplets have been destroyed');
+
+  setTimeout(function(){
+    $('#destroy').text('Destroy');
+    $("#destroy").prop("disabled", false);
+  }, 5000);
 });

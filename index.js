@@ -169,8 +169,6 @@ electron.ipcMain.on('openSettings', function(event, args) {
     initSettings();
 });
 
-console.log(eSettings.getSync('filePath'));
-
 electron.ipcMain.on('open-file-dialog', function (event) {
     require('electron').dialog.showOpenDialog({
       properties: ['openFile'],
@@ -184,6 +182,29 @@ electron.ipcMain.on('open-file-dialog', function (event) {
           event.sender.send('selected-file', filename[0]);
       }
     })
+});
+
+electron.ipcMain.on('wipeDroplets', function (event) {
+  api = new DigitalOcean(eSettings.getSync('do_api_key'));
+  var droplets = [];
+  api.dropletsGetAll({}, function(err, resp, body) {
+      if (err) {
+          console.log(err);
+          event.sender.send('errDestroy');
+      }
+
+      for (var i = 0; i < body.droplets.length; i++) {
+        var id = body.droplets[i].id;
+        var dropletName = body.droplets[i].name;
+        if (dropletName.endsWith('-ep')) {
+          api.dropletsDelete(id, function(err, resp, body) {});
+        }
+      }
+
+      event.sender.send('wipe-complete');
+
+      //console.log(body);
+  });
 });
 
 electron.ipcMain.on('fetchForImages', function(event) {
@@ -270,7 +291,7 @@ function initSettings() {
     settingsWin.loadURL(`file://${__dirname}/static/settings.html`);
     // No menu on the About settingsWindow
     settingsWin.setMenu(null);
-
+    //settingsWin.webContents.openDevTools()
     settingsWin.once('ready-to-show', function() {
         settingsWin.show()
     })
