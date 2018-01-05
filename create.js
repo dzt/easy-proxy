@@ -234,14 +234,6 @@ var task = function(win, info, settings, no, callback) {
                         });
                     }
 
-
-                    var ssh = new SSH({
-                        host: host,
-                        user: 'root',
-                        key: require('fs').readFileSync(eSettings.getSync('filePath')),
-                        passphrase: para
-                    });
-
                         sender.send('updateMonitor', {
                             no: no,
                             msg: `SSH Connection Established`,
@@ -266,7 +258,7 @@ var task = function(win, info, settings, no, callback) {
                             request({
                                 method: 'get',
                                 url: 'https://google.com/',
-                                proxy: "http://" + info.username + ":" + info.password + "@" + host + ":" + '3128',
+                                proxy: "http://" + host + ":" + '3128',
                                 gzip: true,
                                 headers: {
                                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3107.4 Safari/537.36'
