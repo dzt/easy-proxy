@@ -3,7 +3,9 @@ Mass proxy distribution made easy with the DigitalOcean API
 
 ![screen](https://i.imgur.com/ZIabShH.png)
 
-### Installation
+[DOWNLOADS CAN BE FOUND HERE](https://github.com/dzt/easy-proxy/releases)
+
+### Setup (for development)
 
 easy-proxy requires [Node.js](http://nodejs.org/).
 
@@ -18,6 +20,7 @@ $ npm run dev
 
 # Videos
 [Preview & Explanation Video](https://youtu.be/Uy0EpcAgaAs)
+
 [RSA ID Setup on macOS](https://streamable.com/6gnpe)
 
 ### Who
