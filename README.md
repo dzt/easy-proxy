@@ -5,6 +5,8 @@ Mass proxy distribution made easy with the DigitalOcean API
 
 [DOWNLOADS CAN BE FOUND HERE](https://github.com/dzt/easy-proxy/releases)
 
+[Community Discord Server](https://discord.gg/BkDxcjT)
+
 ### Setup (for development)
 
 easy-proxy requires [Node.js](http://nodejs.org/).
