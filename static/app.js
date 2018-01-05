@@ -47,13 +47,13 @@ $('#createButton').click(() => {
 
         alert("You must set the number of proxies you want to create before performing this action.");
 
-    } else if (settingsValues.filePath == null || settingsValues.do_api_key == null) {
+    } else if (settingsValues.do_api_key == null) {
 
         alert("You're missing crutial settings required to create proxies, please check your settings and try again.");
 
     } else {
 
-        	
+
         $("#results").empty();
 
         $("#createButton").prop("disabled", true);
