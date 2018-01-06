@@ -1,4 +1,4 @@
-# easy-proxy 2.0
+# easy-proxy
 Mass proxy distribution made easy with the DigitalOcean API
 
 ![screen](https://i.imgur.com/ZIabShH.png)
