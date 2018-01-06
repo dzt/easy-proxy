@@ -1,6 +1,6 @@
 {
     "name": "EasyProxy",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "description": "Easy Proxy Creation",
     "main": "index.js",
     "scripts": {

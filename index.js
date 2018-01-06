@@ -9,6 +9,7 @@ const eSettings = require('electron-settings')
 const create = require('./create')
 const path = require('path')
 const async = require('async')
+const ChildProcess = require('child_process')
 var DigitalOcean = require('do-wrapper'),
     api = null;
 
