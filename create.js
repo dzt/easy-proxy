@@ -1,5 +1,5 @@
 const randomstring = require('randomstring')
-const DigitalOcean = require('do-wrapper')
+const DigitalOcean = require('do-wrapper').default
 const eSettings = require('electron-settings')
 const request = require('request')
 const _ = require('underscore')
