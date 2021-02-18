@@ -10,7 +10,7 @@ const create = require('./create')
 const path = require('path')
 const async = require('async')
 const ChildProcess = require('child_process')
-var DigitalOcean = require('do-wrapper'),
+var DigitalOcean = require('do-wrapper').default,
     api = null;
 
 var win, settingsWin;
@@ -330,7 +330,7 @@ electron.ipcMain.on('fetchForImages', function(event) {
             })
         }
 
-        api.imagesGetAll({}, function(err, resp, body) {
+        api.imagesGetAll({type: 'distribution'}, function(err, resp, body) {
             if (err) {
                 // Return Error to Window
                 win.webContents.send('initError');
